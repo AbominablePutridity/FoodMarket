@@ -16,7 +16,9 @@
         "nelmio/api-doc-bundle": "^4.26",
         "symfony/validator": "6.4.*",
         "symfony/dotenv": "6.4.*",
-        "symfony/flex": "^2.4"
+        "symfony/flex": "^2.4",
+        "phpoffice/phpword": "^1.1",
+        "symfony/runtime": "^6.4"
     },
     "require-dev": {
         "symfony/maker-bundle": "^1.57"

@@ -10,7 +10,8 @@ RUN apk add --no-cache \
     zip \
     unzip \
     curl \
-    && docker-php-ext-install pdo_pgsql opcache
+    libzip-dev \
+    && docker-php-ext-install pdo_pgsql opcache zip
 
 # Устанавливаем Composer (менеджер зависимостей PHP)
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer

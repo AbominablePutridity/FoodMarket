@@ -1,24 +1,15 @@
 <?php
 
-/**
- * FoodMarket - Service: ReceiptService
- * 
- * Сервис для генерации электронных чеков.
- * Создаёт текстовый документ с таблицей товаров из оплаченной корзины.
- */
-
 namespace App\Service;
 
 use App\Entity\Cart;
+use PhpOffice\PhpWord\PhpWord;
+use PhpOffice\PhpWord\IOFactory;
+use PhpOffice\PhpWord\Shared\Converter;
+use PhpOffice\PhpWord\SimpleType\Jc;
 
 class ReceiptService
 {
-    /**
-     * Генерирует чек в виде форматированного текста
-     *
-     * @param Cart $cart Оплаченная корзина
-     * @return string Содержимое чека
-     */
     public function generateReceipt(Cart $cart): string
     {
         if ($cart->getStatus() !== Cart::STATUS_PAID) {
@@ -26,22 +17,58 @@ class ReceiptService
         }
 
         $user = $cart->getUser();
+        $phpWord = new PhpWord();
+        $phpWord->setDefaultFontName('Arial');
+        $phpWord->setDefaultFontSize(10);
 
-        // шапка чека
-        $receipt = [];
-        $receipt[] = str_repeat('=', 80);
-        $receipt[] = '                     ЧЕК ОБ ОПЛАТЕ - FoodMarket';
-        $receipt[] = str_repeat('=', 80);
-        $receipt[] = '';
-        $receipt[] = sprintf('Номер заказа:   #%d', $cart->getId());
-        $receipt[] = sprintf('Покупатель:     %s', $user->getEmail());
-        $receipt[] = sprintf('Дата оплаты:    %s', $cart->getPaidAt()->format('d.m.Y H:i:s'));
-        $receipt[] = '';
-        $receipt[] = str_repeat('-', 80);
-        $receipt[] = sprintf('%-5s | %-40s | %-10s | %-8s | %-10s', '№', 'Наименование', 'Цена', 'Кол-во', 'Сумма');
-        $receipt[] = str_repeat('-', 80);
+        $section = $phpWord->addSection([
+            'orientation' => 'portrait',
+            'marginLeft'  => Converter::cmToTwip(2),
+            'marginRight' => Converter::cmToTwip(2),
+            'marginTop'   => Converter::cmToTwip(2),
+            'marginBottom'=> Converter::cmToTwip(2),
+        ]);
 
-        // товары
+        $section->addText(
+            'ЧЕК ОБ ОПЛАТЕ — FoodMarket',
+            ['bold' => true, 'size' => 16, 'color' => '2b7a3a'],
+            ['alignment' => Jc::CENTER, 'spaceAfter' => 240]
+        );
+
+        $section->addText(
+            sprintf('Заказ #%d', $cart->getId()),
+            ['bold' => true, 'size' => 12],
+            ['alignment' => Jc::CENTER, 'spaceAfter' => 120]
+        );
+
+        $styleName = 'ReceiptTable';
+        $phpWord->addTableStyle($styleName, [
+            'borderSize'  => 6,
+            'borderColor' => '999999',
+            'cellMargin'  => 80,
+        ], [
+            'header' => ['bold' => true, 'size' => 10, 'bgColor' => 'e8f5e9'],
+        ]);
+
+        $section->addText(
+            sprintf('Покупатель: %s', $user->getEmail()),
+            ['size' => 10],
+            ['spaceAfter' => 60]
+        );
+        $section->addText(
+            sprintf('Дата оплаты: %s', $cart->getPaidAt()->format('d.m.Y H:i:s')),
+            ['size' => 10],
+            ['spaceAfter' => 200]
+        );
+
+        $table = $section->addTable($styleName);
+        $table->addRow();
+        $table->addCell(600)->addText('№', ['bold' => true], ['alignment' => Jc::CENTER]);
+        $table->addCell(5000)->addText('Наименование', ['bold' => true]);
+        $table->addCell(1800)->addText('Цена, ₽', ['bold' => true], ['alignment' => Jc::RIGHT]);
+        $table->addCell(1000)->addText('Кол-во', ['bold' => true], ['alignment' => Jc::CENTER]);
+        $table->addCell(1800)->addText('Сумма, ₽', ['bold' => true], ['alignment' => Jc::RIGHT]);
+
         $index = 1;
         foreach ($cart->getItems() as $item) {
             $product = $item->getProduct();
@@ -49,26 +76,33 @@ class ReceiptService
             $quantity = $item->getQuantity();
             $subtotal = $item->getSubtotal();
 
-            $name = mb_substr($product->getName(), 0, 38);
-            $receipt[] = sprintf(
-                '%-5d | %-40s | %-10.2f | %-8d | %-10.2f',
-                $index,
-                $name,
-                $price,
-                $quantity,
-                $subtotal
-            );
+            $table->addRow();
+            $table->addCell(600)->addText((string) $index, null, ['alignment' => Jc::CENTER]);
+            $table->addCell(5000)->addText($product->getName());
+            $table->addCell(1800)->addText(number_format($price, 2, ',', ' '), null, ['alignment' => Jc::RIGHT]);
+            $table->addCell(1000)->addText((string) $quantity, null, ['alignment' => Jc::CENTER]);
+            $table->addCell(1800)->addText(number_format($subtotal, 2, ',', ' '), null, ['alignment' => Jc::RIGHT]);
             $index++;
         }
 
-        $receipt[] = str_repeat('-', 80);
-        $receipt[] = sprintf('%-68s %-10.2f', 'ИТОГО К ОПЛАТЕ:', (float) $cart->getTotal());
-        $receipt[] = str_repeat('-', 80);
-        $receipt[] = '';
-        $receipt[] = '  Спасибо за покупку! Приходите ещё :)';
-        $receipt[] = '';
-        $receipt[] = str_repeat('=', 80);
+        $section->addText('', null, ['spaceBefore' => 120]);
 
-        return implode("\n", $receipt);
+        $section->addText(
+            sprintf('ИТОГО к оплате: %s ₽', number_format((float) $cart->getTotal(), 2, ',', ' ')),
+            ['bold' => true, 'size' => 12, 'color' => '2b7a3a'],
+            ['alignment' => Jc::RIGHT, 'spaceAfter' => 200]
+        );
+
+        $section->addText(
+            'Спасибо за покупку! Приходите ещё :)',
+            ['italic' => true, 'size' => 10, 'color' => '666666'],
+            ['alignment' => Jc::CENTER]
+        );
+
+        $tempFile = tempnam(sys_get_temp_dir(), 'receipt_') . '.docx';
+        $writer = IOFactory::createWriter($phpWord, 'Word2007');
+        $writer->save($tempFile);
+
+        return $tempFile;
     }
 }

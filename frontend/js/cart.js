@@ -135,22 +135,21 @@ class Cart {
             const response = await fetch(url, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
-                    'Accept': 'text/plain',
                 },
             });
 
-            const text = await response.text();
-
             if (!response.ok) {
+                const text = await response.text();
                 throw new Error(text || 'Ошибка получения чека');
             }
 
-            // создаём Blob и скачиваем
-            const blob = new Blob([text], { type: 'text/plain; charset=utf-8' });
+            const blob = await response.blob();
             const link = document.createElement('a');
             link.href = URL.createObjectURL(blob);
-            link.download = `receipt_${cartId}.txt`;
+            link.download = `receipt_${cartId}.docx`;
+            document.body.appendChild(link);
             link.click();
+            document.body.removeChild(link);
             URL.revokeObjectURL(link.href);
 
             App.showNotification('Чек скачан!', 'success');
