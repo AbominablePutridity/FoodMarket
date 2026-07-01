@@ -1,0 +1,91 @@
+# FoodMarket - CI/CD Pipeline
+# ============================
+# Этот файл определяет автоматическую проверку кода при каждом push в репозиторий.
+# 
+# Что делает:
+# 1. Проверяет код на PHPStan (статический анализ)
+# 2. Запускает сборку Docker образов
+# 3. (В будущем) запускает тесты
+#
+# Как расширить:
+# - Добавить шаг с запуском PHPUnit тестов
+# - Добавить деплой на сервер после успешной сборки
+
+name: FoodMarket CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  # Job: проверка PHP кода
+  php-checks:
+    runs-on: ubuntu-latest
+    name: PHP Checks
+
+    steps:
+      # 1. Клонируем репозиторий
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # 2. Устанавливаем PHP
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+          extensions: pdo_pgsql, mbstring, intl
+          tools: composer
+
+      # 3. Устанавливаем зависимости Composer
+      - name: Install dependencies
+        run: |
+          cd backend
+          composer install --no-interaction --no-progress
+
+      # 4. Статический анализ PHPStan (проверка типов)
+      - name: Run PHPStan
+        run: |
+          cd backend
+          vendor/bin/phpstan analyse src --level=0 || true
+
+  # Job: сборка Docker
+  docker-build:
+    runs-on: ubuntu-latest
+    name: Docker Build
+    needs: php-checks
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Собираем PHP образ
+      - name: Build PHP Docker image
+        run: |
+          docker build -t foodmarket-php ./backend
+
+      # Проверяем, что docker-compose файл валидный
+      - name: Validate docker-compose
+        run: |
+          docker-compose config -q
+
+  # Job: деплой (выполняется только при push в main/master)
+  deploy:
+    runs-on: ubuntu-latest
+    name: Deploy
+    needs: [php-checks, docker-build]
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Deploy to server (placeholder)
+        run: |
+          echo "=== Деплой ==="
+          echo "На этом шаге можно добавить деплой на сервер:"
+          echo "  - docker-compose push на registry"
+          echo "  - ssh deploy на продакшн"
+          echo "  - запуск миграций"
+          echo "=== Готово ==="

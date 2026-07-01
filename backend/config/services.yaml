@@ -1,0 +1,17 @@
+# FoodMarket - конфигурация сервисов
+parameters:
+    router.request_context.scheme: 'http'
+    router.request_context.host: 'localhost'
+
+services:
+    # стандартная конфигурация сервисов
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    # регистрация всех классов в src/ как сервисов
+    App\:
+        resource: '../src/'
+        exclude:
+            - '../src/Entity/'
+            - '../src/Kernel.php'

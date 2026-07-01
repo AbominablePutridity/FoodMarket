@@ -1,0 +1,12 @@
+App\Entity\CartItem:
+  attributes:
+    id:
+      groups: ['cart:read']
+    quantity:
+      groups: ['cart:read']
+    priceAtTime:
+      groups: ['cart:read']
+    subtotal:
+      groups: ['cart:read']
+    product:
+      groups: ['cart:read']

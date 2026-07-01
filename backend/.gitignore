@@ -1,0 +1,35 @@
+# FoodMarket - .gitignore
+# Файлы и директории, которые не нужно хранить в Git
+
+# Зависимости Composer
+/vendor/
+
+# Кэш и логи Symfony
+/var/
+
+# JWT ключи (генерируются автоматически)
+/config/jwt/
+
+# Файлы окружения (личные настройки)
+.env.local
+.env.*.local
+
+# IDE
+/.idea/
+.vscode/
+*.swp
+*.swo
+
+###> symfony/framework-bundle ###
+/.env.local
+/.env.local.php
+/.env.*.local
+/config/secrets/prod/prod.decrypt.private.php
+/public/bundles/
+/var/
+/vendor/
+###< symfony/framework-bundle ###
+
+###> lexik/jwt-authentication-bundle ###
+/config/jwt/*.pem
+###< lexik/jwt-authentication-bundle ###

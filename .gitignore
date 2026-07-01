@@ -1,0 +1,16 @@
+# FoodMarket - корневой .gitignore
+# Игнорируем файлы Docker, которые генерируются автоматически
+
+# Файлы окружения
+.env
+.env.local
+
+# IDE
+/.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db

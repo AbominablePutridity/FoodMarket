@@ -1,0 +1,14 @@
+App\Entity\Cart:
+  attributes:
+    id:
+      groups: ['cart:read']
+    status:
+      groups: ['cart:read']
+    total:
+      groups: ['cart:read']
+    createdAt:
+      groups: ['cart:read']
+    paidAt:
+      groups: ['cart:read']
+    items:
+      groups: ['cart:read']

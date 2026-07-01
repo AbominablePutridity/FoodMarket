@@ -1,0 +1,4 @@
+# FoodMarket Frontend - .gitignore
+# Для фронтенда обычно нечего игнорировать,
+# но на будущее (если добавится Node.js сборка)
+/node_modules/

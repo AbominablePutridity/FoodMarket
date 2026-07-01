@@ -1,0 +1,20 @@
+App\Entity\Product:
+  attributes:
+    id:
+      groups: ['product:read', 'cart:read']
+    name:
+      groups: ['product:read', 'cart:read']
+    price:
+      groups: ['product:read']
+    imageUrl:
+      groups: ['product:read', 'cart:read']
+    discountedPrice:
+      groups: ['product:read', 'cart:read']
+    deliveryDate:
+      groups: ['product:read']
+    discountPercent:
+      groups: ['product:read']
+    createdAt:
+      groups: ['product:read']
+    category:
+      groups: ['product:read']

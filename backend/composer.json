@@ -1,0 +1,44 @@
+{
+    "name": "foodmarket/api",
+    "description": "FoodMarket API - магазин продуктов",
+    "type": "project",
+    "require": {
+        "php": ">=8.1",
+        "symfony/framework-bundle": "6.4.*",
+        "symfony/security-bundle": "6.4.*",
+        "symfony/serializer": "6.4.*",
+        "symfony/property-access": "6.4.*",
+        "symfony/property-info": "6.4.*",
+        "doctrine/orm": "^2.19",
+        "doctrine/doctrine-bundle": "^2.12",
+        "doctrine/doctrine-migrations-bundle": "^3.3",
+        "lexik/jwt-authentication-bundle": "^2.21",
+        "nelmio/api-doc-bundle": "^4.26",
+        "symfony/validator": "6.4.*",
+        "symfony/dotenv": "6.4.*",
+        "symfony/flex": "^2.4"
+    },
+    "require-dev": {
+        "symfony/maker-bundle": "^1.57"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "symfony/flex": true,
+            "symfony/runtime": true
+        },
+        "audit": {
+            "ignore": []
+        }
+    },
+    "scripts": {
+        "auto-scripts": {
+            "cache:clear": "symfony-cmd",
+            "assets:install %PUBLIC_DIR%": "symfony-cmd"
+        }
+    }
+}

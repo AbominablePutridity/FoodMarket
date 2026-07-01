@@ -1,0 +1,16 @@
+# FoodMarket - конфигурация Symfony framework
+framework:
+    secret: '%env(APP_SECRET)%'
+    router:
+        utf8: true
+    session:
+        enabled: false
+    php_errors:
+        log: true
+    serializer:
+        enabled: true
+        name_converter: serializer.name_converter.camel_case_to_snake_case
+    property_info:
+        enabled: true
+    validation:
+        enabled: true

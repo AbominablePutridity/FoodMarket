@@ -1,0 +1,84 @@
+# FoodMarket - маршруты API
+api_login_check:
+    path: /api/auth/login
+    methods: [POST]
+
+api_auth_register:
+    path: /api/auth/register
+    controller: App\Controller\AuthController::register
+    methods: [POST]
+
+api_products_list:
+    path: /api/products
+    controller: App\Controller\ProductController::list
+    methods: [GET]
+
+api_products_show:
+    path: /api/products/{id}
+    controller: App\Controller\ProductController::show
+    methods: [GET]
+
+api_categories_list:
+    path: /api/categories
+    controller: App\Controller\CategoryController::list
+    methods: [GET]
+
+api_admin_products_create:
+    path: /api/admin/products
+    controller: App\Controller\AdminController::createProduct
+    methods: [POST]
+
+api_admin_products_update:
+    path: /api/admin/products/{id}
+    controller: App\Controller\AdminController::updateProduct
+    methods: [PUT]
+
+api_admin_products_discount:
+    path: /api/admin/products/{id}/discount
+    controller: App\Controller\AdminController::setDiscount
+    methods: [POST]
+
+api_admin_products_delete:
+    path: /api/admin/products/{id}
+    controller: App\Controller\AdminController::deleteProduct
+    methods: [DELETE]
+
+api_admin_products_images_upload:
+    path: /api/admin/products/{id}/images
+    controller: App\Controller\AdminController::uploadImages
+    methods: [POST]
+
+api_admin_products_images_delete:
+    path: /api/admin/products/{id}/images/{imageId}
+    controller: App\Controller\AdminController::deleteImage
+    methods: [DELETE]
+
+api_admin_products_images_primary:
+    path: /api/admin/products/{id}/images/{imageId}/primary
+    controller: App\Controller\AdminController::setPrimaryImage
+    methods: [PUT]
+
+api_cart_show:
+    path: /api/cart
+    controller: App\Controller\CartController::show
+    methods: [GET]
+
+api_cart_add:
+    path: /api/cart/add
+    controller: App\Controller\CartController::add
+    methods: [POST]
+
+api_cart_remove:
+    path: /api/cart/remove/{id}
+    controller: App\Controller\CartController::remove
+    methods: [DELETE]
+
+api_cart_pay:
+    path: /api/cart/pay
+    controller: App\Controller\CartController::pay
+    methods: [POST]
+
+api_cart_receipt:
+    path: /api/cart/receipt/{id}
+    controller: App\Controller\CartController::receipt
+    methods: [GET]
