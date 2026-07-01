@@ -6,8 +6,6 @@ App\Entity\Product:
       groups: ['product:read', 'cart:read']
     price:
       groups: ['product:read']
-    imageUrl:
-      groups: ['product:read', 'cart:read']
     discountedPrice:
       groups: ['product:read', 'cart:read']
     deliveryDate:
@@ -18,3 +16,5 @@ App\Entity\Product:
       groups: ['product:read']
     category:
       groups: ['product:read']
+    images:
+      groups: ['product:read', 'cart:read']

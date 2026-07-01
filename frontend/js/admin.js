@@ -251,7 +251,7 @@ class Admin {
 
     static async seedData() {
         App.showNotification(
-            'Для заполнения тестовыми данными выполните SQL скрипт из файла backend/data/seed.sql через админку БД',
+            'Выполните: docker exec foodmarket-php php /app/bin/console app:seed',
             'info'
         );
     }
