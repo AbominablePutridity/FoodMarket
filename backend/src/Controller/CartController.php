@@ -20,7 +20,8 @@ use App\Service\ReceiptService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
 use OpenApi\Attributes as OA;
@@ -173,27 +174,28 @@ class CartController extends AbstractController
             new OA\Response(response: 404, description: 'Корзина не найдена'),
         ]
     )]
-    public function receipt(int $id): Response
+    public function receipt(int $id): BinaryFileResponse
     {
         $cart = $this->cartRepository->find($id);
 
         if (!$cart || $cart->getUser()->getId() !== $this->getUser()->getId()) {
-            return $this->json(['error' => 'Корзина не найдена'], 404);
+            throw $this->createNotFoundException('Корзина не найдена');
         }
 
         try {
-            $receipt = $this->receiptService->generateReceipt($cart);
+            $filePath = $this->receiptService->generateReceipt($cart);
         } catch (\RuntimeException $e) {
             return $this->json(['error' => $e->getMessage()], 400);
         }
 
-        return new Response(
-            $receipt,
-            200,
-            [
-                'Content-Type' => 'text/plain; charset=utf-8',
-                'Content-Disposition' => 'attachment; filename="receipt_' . $cart->getId() . '.txt"',
-            ]
+        $response = new BinaryFileResponse($filePath);
+        $response->headers->set('Content-Type', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
+        $response->setContentDisposition(
+            ResponseHeaderBag::DISPOSITION_ATTACHMENT,
+            'receipt_' . $cart->getId() . '.docx'
         );
+        $response->deleteFileAfterSend(true);
+
+        return $response;
     }
 }
