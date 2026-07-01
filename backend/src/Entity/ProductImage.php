@@ -12,7 +12,7 @@ class ProductImage
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    #[Groups(['product:read'])]
+    #[Groups(['product:read', 'cart:read'])]
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'images', targetEntity: Product::class)]
@@ -20,7 +20,7 @@ class ProductImage
     private ?Product $product = null;
 
     #[ORM\Column(type: 'string', length: 255)]
-    #[Groups(['product:read'])]
+    #[Groups(['product:read', 'cart:read'])]
     private ?string $filename = null;
 
     #[ORM\Column(type: 'string', length: 255)]
@@ -34,7 +34,7 @@ class ProductImage
     private ?int $size = null;
 
     #[ORM\Column(type: 'boolean', options: ['default' => false])]
-    #[Groups(['product:read'])]
+    #[Groups(['product:read', 'cart:read'])]
     private bool $isPrimary = false;
 
     #[ORM\Column(type: 'datetime_immutable')]
@@ -121,7 +121,7 @@ class ProductImage
         return $this->createdAt;
     }
 
-    #[Groups(['product:read'])]
+    #[Groups(['product:read', 'cart:read'])]
     public function getUrl(): string
     {
         return '/uploads/products/' . $this->filename;

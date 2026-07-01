@@ -68,7 +68,7 @@ jobs:
       # Проверяем, что docker-compose файл валидный
       - name: Validate docker-compose
         run: |
-          docker-compose config -q
+          docker compose config -q
 
   # Job: деплой (выполняется только при push в main/master)
   deploy:

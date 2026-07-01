@@ -31,8 +31,10 @@ COPY . .
 RUN composer install --no-interaction --optimize-autoloader --no-dev
 
 # Права на кэш, логи и будущие JWT ключи
-RUN mkdir -p config/jwt var/cache var/log && \
-    chmod -R 777 config/jwt var/cache var/log
+# Создаём директории от www-data, чтобы php-fpm мог писать
+RUN mkdir -p config/jwt var/cache var/log var/cache/dev/doctrine/orm/Proxies && \
+    chown -R www-data:www-data config/jwt var/cache var/log && \
+    chmod -R 775 config/jwt var/cache var/log
 
 EXPOSE 9000
 

@@ -187,6 +187,9 @@ class AdminController extends AbstractController
             $files = [$files];
         }
 
+        $allowedMimeTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+        $maxFileSize = 5 * 1024 * 1024; // 5 MB
+
         $uploaded = [];
         $errors = [];
 
@@ -196,7 +199,11 @@ class AdminController extends AbstractController
                 continue;
             }
 
-            $allowedMimeTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+            if ($file->getSize() > $maxFileSize) {
+                $errors[] = "Файл слишком большой (макс. 5MB): {$file->getClientOriginalName()}";
+                continue;
+            }
+
             $clientMimeType = $file->getClientMimeType();
             if (!in_array($clientMimeType, $allowedMimeTypes)) {
                 $errors[] = "Недопустимый тип файла: {$file->getClientOriginalName()}";

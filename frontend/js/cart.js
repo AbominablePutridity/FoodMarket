@@ -109,26 +109,19 @@ class Cart {
         try {
             const data = await Api.post('/cart/pay');
             App.showNotification(`Корзина #${data.cartId} оплачена! Чек готов к скачиванию.`, 'success');
-            this.loadCart();
-            // показываем кнопку для скачивания чека
-            this.showReceiptButton(data.cartId);
+            const container = document.getElementById('cartContent');
+            container.innerHTML = `
+                <p>Корзина #${data.cartId} оплачена.</p>
+                <div style="margin-top: 12px; text-align: center;">
+                    <button class="btn btn--primary" onclick="Cart.downloadReceipt(${data.cartId})">
+                        Скачать электронный чек
+                    </button>
+                </div>
+            `;
+            document.getElementById('btnCheckout').style.display = 'none';
         } catch (error) {
             App.showNotification(error.message, 'error');
         }
-    }
-
-    /**
-     * Показывает кнопку для скачивания чека после оплаты
-     */
-    static showReceiptButton(cartId) {
-        const container = document.getElementById('cartContent');
-        container.innerHTML += `
-            <div style="margin-top: 12px; text-align: center;">
-                <button class="btn btn--primary" onclick="Cart.downloadReceipt(${cartId})">
-                    Скачать электронный чек
-                </button>
-            </div>
-        `;
     }
 
     /**
